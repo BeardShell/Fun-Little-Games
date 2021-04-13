@@ -1,5 +1,6 @@
 $maxValue = 10
 $answer = 0
+$score = 1000
 
 function playGame {
     $answer = generateNumber -maxValue $maxValue
@@ -26,6 +27,7 @@ function evaluateInput {
     if ($userInput -gt 0 -and $userInput -le $maxValue) {
         if ($userInput -eq $answer) {
             Write-Output "*** GEFELICITEERD, $($userInput) IS HET JUISTE ANTWOORD! ***"
+            Write-Output "Je hebt $($score) punten behaald!"
             break
         } else {
             giveHint($userInput)
@@ -39,10 +41,12 @@ function evaluateInput {
 function giveHint {
     if ($userInput -lt $answer) {
         Write-Output "Het getal wat je zoekt is groter!"
+        $score = $score - 100
         userGuess
     }
     if ($userInput -gt $answer) {
         Write-Output "Het getal wat je zoekt is kleiner!"
+        $score = $score - 100
         userGuess
     }
 }
