@@ -1,52 +1,69 @@
 import random
 
-
-min_rand = 1
-max_rand = 10
 score = 1000
-answer = 0
 
+class Game:
+    def __init__(self):
+        self.min_rand = 1
+        self.max_rand = 100
+        self.max_attempt = 10
 
-def play_game():
-    """
-    Start a new game. Explanation and start score are shown here
-    """
-    global answer
-    answer = generate_new_number(min_rand,max_rand)
-    user_guess = ask_a_guess()
+    def new_game(self):
+        """
+        Start a new game. Explanation and start score are shown here
+        """
+        self.answer = self.generate_new_number()
+        self.ask_a_guess()
 
-def generate_new_number(min_rand,max_rand):
-    return random.randint(min_rand,max_rand)
+    def generate_new_number(self) -> int:
+        return random.randint(self.min_rand, self.max_rand)
 
-def ask_a_guess():
-    user_input = input("Raad het getal: ")
-    guess = int(user_input)
-    evaluate_input(guess, answer)
+    def ask_a_guess(self):
+        question = "Raad het getal: "
+        user_input = input(question)
 
-def evaluate_input(user_input, answer):
-    guess = int(user_input)
-    global score
+        while not user_input.isdigit():
+            user_input = input(f"De ingevoerde waarde is geen getal. Probeer het nog een keer. {question}")
 
-    if guess < min_rand or guess > max_rand:
-        print("Blijf binnen de waardes alsjeblieft. (Groter dan {} en kleiner dan {})".format(min_rand, max_rand))
-        ask_a_guess()
-    elif guess == answer:
-        print("Lekker bezig, {} is het goede antwoord!\nJe hebt {} punten behaald.".format(answer,score))
-    else:
-        print("Het door jou ingevoerde getal is niet het goede antwoord.\n")
-        print(give_hint(guess,answer))
-        score -= 100
-        ask_a_guess()
+        guess = int(user_input)
+        self.evaluate_input(guess)
 
-def give_hint(user_input, answer):
-    guess = int(user_input)
+    def evaluate_input(self, user_input : int):
+        guess = int(user_input)
+        global score
 
-    if guess < answer:
-        return "Het antwoord wat je zoekt is groter"
-    else:
+        if guess == self.answer:
+            print(f"Lekker bezig, {self.answer} is het goede antwoord!\nJe hebt {score} punten behaald.\n")
+            return
+
+        if guess < self.min_rand or guess > self.max_rand:
+            print(f"Blijf binnen de waardes alsjeblieft. (Groter dan {self.min_rand} en kleiner dan {self.max_rand})")
+        else:
+            print("Het door jou ingevoerde getal is niet het goede antwoord.\n")
+            print(self.give_hint(guess))
+            score -= 100
+
+            if (score == 0):
+                print("Je score is 0. Hierdoor ben je game over!\n")
+                return
+        self.ask_a_guess()
+
+    def give_hint(self, guess : int) -> str:
+        if guess < self.answer:
+            return "Het antwoord wat je zoekt is groter"
         return "Het antwoord wat je zoekt is kleiner"
 
+def main():
+    game = Game()
+    game.new_game()
 
+    while True:
+        play_again = input("Wil je nog een keer het spel spelen? [J/N]: ")
+
+        if play_again.lower() == "j":
+            game.new_game()
+        elif play_again.lower() == "n":
+            break
 
 if __name__ == "__main__":
-    play_game()
+    main()
